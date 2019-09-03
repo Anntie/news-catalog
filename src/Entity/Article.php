@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\ArticleRepository")
@@ -18,21 +19,25 @@ class Article
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
      */
     private $slug;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank
      */
     private $short_description;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank
      */
     private $description;
 
@@ -46,12 +51,12 @@ class Article
      */
     private $category;
 
-    public function getId(): ?int
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getTitle(): string
     {
         return $this->title;
     }
@@ -63,7 +68,7 @@ class Article
         return $this;
     }
 
-    public function getSlug(): ?string
+    public function getSlug(): string
     {
         return $this->slug;
     }
@@ -75,7 +80,7 @@ class Article
         return $this;
     }
 
-    public function getShortDescription(): ?string
+    public function getShortDescription(): string
     {
         return $this->short_description;
     }
@@ -87,7 +92,7 @@ class Article
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -121,5 +126,18 @@ class Article
         $this->category = $category;
 
         return $this;
+    }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => $this->getId(),
+            'title' => $this->getTitle(),
+            'slug' => $this->getSlug(),
+            'short_description' => $this->getShortDescription(),
+            'description' => $this->getDescription(),
+            'image' => $this->getImage(),
+            'category' => $this->getCategory(),
+        ];
     }
 }

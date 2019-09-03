@@ -75,4 +75,9 @@ class User implements UserInterface
     {
         return;
     }
+
+    public function toJson(): string
+    {
+        return json_encode(['login' => $this->getLogin()]);
+    }
 }
