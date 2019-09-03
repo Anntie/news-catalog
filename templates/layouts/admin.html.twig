@@ -9,6 +9,11 @@
     <meta content='yes' name='apple-mobile-web-app-capable'/>
     <title>{% block title %}News Catalog{% endblock %}</title>
     {% block stylesheets %}
+        <style>
+            * {
+                font-family: sans-serif;
+            }
+        </style>
         {{ encore_entry_link_tags('app') }}
     {% endblock %}
 </head>

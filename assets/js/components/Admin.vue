@@ -10,13 +10,14 @@
 </template>
 
 <script>
-  import SideMenu from './SideMenu';
   import Categories from './Categories';
   import Articles from './Articles';
+  import SideMenu from './SideMenu';
 
   export default {
     name: "Admin",
     components: { Articles, Categories, SideMenu },
+
     props: {
       user: {
         type: Object,
@@ -27,11 +28,7 @@
     data: () => ({
       articles: [],
       categories: [],
-      form: {},
-      currentIndex: 1,
     }),
-
-    computed: {},
 
     created () {
       this.$http.get('/admin/api/categories')
@@ -42,10 +39,6 @@
         .then(
           ({ data }) => this.articles = data.data
         );
-    },
-
-    methods: {
-
-    },
+    }
   }
 </script>
