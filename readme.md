@@ -6,5 +6,6 @@
 > 3. Configure .env
 > 4. `composer install`
 > 5. `yarn install`
-> 6. `php bin/console doctrine:migrations:migrate`
-> 7. `php bin/console app:create-user your_user_name` - it will output raw password 
+> 6. `yarn encore dev`
+> 7. `php bin/console doctrine:migrations:migrate`
+> 8. `php bin/console app:create-user your_user_name` - it will output raw password 
