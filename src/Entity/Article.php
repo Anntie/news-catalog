@@ -137,7 +137,7 @@ class Article
             'short_description' => $this->getShortDescription(),
             'description' => $this->getDescription(),
             'image' => $this->getImage(),
-            'category' => $this->getCategory(),
+            'category' => $this->getCategory()->toArray(),
         ];
     }
 }

@@ -28,7 +28,7 @@
                 <template slot-scope="scope">
                     <el-button
                             size="mini"
-                            @click="handleUpdate(scope.$index, scope.row)">
+                            @click="showUpdate(scope.$index, scope.row)">
                         Edit
                     </el-button>
                     <el-button
@@ -118,6 +118,7 @@
       popupTitle: '',
       form: defaultForm,
       submitHandler: () => {},
+      updating: null,
     }),
 
     computed: {
@@ -130,8 +131,8 @@
     },
 
     watch: {
-      articleTitle () {
-        if (this.articleTitle) {
+      articleTitle (current, old) {
+        if (old && this.articleTitle) {
           this.form.slug = this.$slugify(this.articleTitle);
         }
       },
@@ -150,13 +151,33 @@
 
       closePopup () {
         this.form = defaultForm;
-        this.submitHandler = () => {};
+        this.submitHandler = () => {
+        };
+        this.updating = null;
         this.dialogFormVisible = false;
       },
 
       showCreate () {
         this.popupTitle = 'Create Article';
         this.submitHandler = this.handleCreate;
+        this.showPopup();
+      },
+
+      showUpdate (index) {
+        this.popupTitle = 'Update Article';
+        this.submitHandler = this.handleUpdate;
+        const article = this.value[index];
+
+        this.form = {
+          title: article.title.toString(),
+          slug: article.slug.toString(),
+          short_description: article.short_description.toString(),
+          description: article.description.toString(),
+          image: article.image ? article.image.toString() : null,
+          category: article.category,
+        };
+
+        this.updating = article.id;
         this.showPopup();
       },
 
@@ -171,12 +192,31 @@
       },
 
       handleDelete (index, row) {
-        console.log(index, row);
+        this.$http.delete('/admin/api/articles/' + row.id)
+          .then(({ data }) => {
+            if (data.success) {
+              this.value.splice(index, 1);
+              this.$emit('input', this.value);
+            }
+          })
+          .catch(error => console.log(error));
       },
 
-      handleUpdate (index, row) {
-        this.popupTitle = 'Update Article';
-        console.log(index, row);
+      handleUpdate () {
+        this.$http.put('/admin/api/articles/' + this.updating, this.form)
+          .then(({ data }) => {
+            const updated = data.data;
+            const old = this.value.find(article => article.id === updated.id);
+            old.title = updated.title;
+            old.slug = updated.slug;
+            old.short_description = updated.short_description;
+            old.description = updated.description;
+            old.image = updated.image;
+            old.category = this.categories.find(category => category.id === updated.category.id);
+            this.$emit('input', this.value);
+            this.closePopup();
+          })
+          .catch(error => console.log(error));
       },
     },
   }

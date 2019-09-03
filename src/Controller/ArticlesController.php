@@ -78,6 +78,53 @@ class ArticlesController extends AbstractController
     }
 
     /**
+     * @Route("/articles/{id}", methods={"PUT"})
+     * @param int $id
+     * @param Request $request
+     * @param ValidatorInterface $validator
+     * @param EntityManagerInterface $entityManager
+     * @return JsonResponse
+     */
+    public function update(
+        int $id,
+        Request $request,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager
+    ): JsonResponse
+    {
+        $article = $entityManager
+            ->getRepository(Article::class)
+            ->find($id);
+
+        $data = json_decode($request->getContent());
+        $article->setTitle($data->title);
+        $article->setSlug($data->slug);
+        $article->setShortDescription($data->short_description);
+        $article->setDescription($data->description);
+
+        $category = null;
+        if ($data->category) {
+            $category = $entityManager
+                ->getRepository(Category::class)
+                ->find($data->category->id);
+        }
+        $article->setCategory($category);
+
+        $errors = $validator->validate($article);
+        if (count($errors) > 0) {
+            return new JsonResponse([
+                'errors' => (string) $errors
+            ]);
+        }
+
+        $entityManager->flush();
+
+        return new JsonResponse([
+            'data' => $article->toArray()
+        ]);
+    }
+
+    /**
      * @Route("/articles/{id}", methods={"DELETE"})
      * @param int $id
      * @param EntityManagerInterface $entityManager
